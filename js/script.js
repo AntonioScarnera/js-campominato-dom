@@ -43,7 +43,8 @@ function creaColonne(classMod){
 
 function generateBombs(colNumber){
 
-    max_attempt = colNumber - BOMB_NUMBER;
+
+    bombs.length = 0;
     while(bombs.length < BOMB_NUMBER){
         let bombNumber = getRandomNumber(1, colNumber); 
         if(!bombs.includes(bombNumber)){
@@ -57,48 +58,76 @@ function coloraCella(){
 
     let num = parseInt(this.innerText);
     attemps++;
+    max_attempt = 3;
     console.log(attemps);
-    if(attemps <= 30){
+    if(attemps <= max_attempt){
         if(bombs.includes(num)){
-            this.style.backgroundColor = '#B70000';
-            this.innerHTML = `<img src="img/bomb.png">`
-            gameover(num);
+            gameover();
         }else{
             this.style.backgroundColor = '#6495ed';
         }
-        this.classList.remove("pointer");
-        this.removeEventListener('click', coloraCella)
     }
-    if(attemps == 30){
-        let main = document.getElementById("app");
-        let result = `
-        <div class="text-center">
-        <h1>HAI VINTO!!</h1> <br> 
-        <h4>Hai trovato le ${attemps} caselle corrette!</h4>
-        </div>
-        `
-        main.innerHTML = result;
-            
-         
+    this.classList.remove("pointer");
+    this.removeEventListener('click', coloraCella);
+
+    if(attemps == max_attempt){
+        gamewin();
+        attemps = 0; 
     }
 
 }
 
-function gameover(numero){
-    if(bombs.includes(numero)){
-        let main = document.getElementById("app");
-        let gamestop = `
-        <div class="text-center">
-        <h1>HAI perso!!</h1> <br> 
-        </div>
-        `
-        main.innerHTML = gamestop;
+function gameover(){
+    
+    let caselle = document.getElementsByClassName("mycol");
+    console.log('leggo caselle', caselle);
+    for(let i = 0; i < caselle.length; i++){
+        console.log(caselle[i].innerText);
+        if(bombs.includes(parseInt(caselle[i].innerText))){
+            caselle[i].style.backgroundColor = '#B70000';
+            caselle[i].innerHTML = `<img src="img/bomb.png">`;
+            caselle[i].removeEventListener('click', coloraCella);
+            caselle[i].classList.remove("pointer");
+        }
+        if(!bombs.includes(parseInt(caselle[i].innerText))){
+            caselle[i].removeEventListener('click', coloraCella);
+            caselle[i].classList.remove("pointer");
+        }
+    }
+    let main = document.getElementById("app");
+    let gamestop = document.createElement("div");
+    gamestop.setAttribute("class", "text-center");
+    let lose = document.createElement("h1");
+    lose.append("Hai Perso!!")
+    gamestop.append(lose);
+    main.append(gamestop);
+}
+function gamewin(){
+    let main = document.getElementById("app");
+    let result = document.createElement("div");
+    result.setAttribute("class", "text-center");
+    let win = document.createElement("h1");
+    let points = document.createElement("h3");
+    win.append("Hai Vinto!!")
+    points.append(`Hai trovato le ${attemps} celle esatte!`)
+    result.append(win, points);
+    main.append(result);
+    let caselle = document.getElementsByClassName("mycol");
+    console.log('leggo caselle', caselle);
+    for(let i = 0; i < caselle.length; i++){
+        console.log(caselle[i].innerText);
+        if(bombs.includes(parseInt(caselle[i].innerText))){
+            caselle[i].style.backgroundColor = '#B70000';
+            caselle[i].innerHTML = `<img src="img/bomb.png">`;
+            caselle[i].removeEventListener('click', coloraCella);
+            caselle[i].classList.remove("pointer");
+        }
+        if(!bombs.includes(parseInt(caselle[i].innerText))){
+            caselle[i].removeEventListener('click', coloraCella);
+            caselle[i].classList.remove("pointer");
+        }
     }
 }
-
-
-
-
 
 btn.addEventListener('click', function(){
     
